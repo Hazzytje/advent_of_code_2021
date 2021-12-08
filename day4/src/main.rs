@@ -53,7 +53,7 @@ fn main() {
     let bingo_draws = input.next().unwrap();
     let bingo_draws : Vec<u32> = bingo_draws.split(',').map(|n| n.parse::<u32>().unwrap()).collect();
 
-    let score_for_first_bingo = input.map(|bingo_card_digits| {
+    let calls_and_scores : Vec<(usize, u32)> = input.map(|bingo_card_digits| {
         let mut bingo_card = BingoCard::new(bingo_card_digits);
         for (draw_index, bingo_draw) in bingo_draws.iter().enumerate() {
             (&mut bingo_card).call(*bingo_draw);
@@ -61,8 +61,14 @@ fn main() {
                 return (draw_index, bingo_card.score());
             }
         }
-        return (999, 0);
-    }).min_by_key(|board| board.0).map(|(_, score)| score).unwrap();
+        return (9999999, 0);
+    }).collect();
+
+    let score_for_first_bingo = calls_and_scores.iter().min_by_key(|board| board.0).map(|(_, score)| score).unwrap();
 
     println!("Score for first bingo: {}", score_for_first_bingo);
+
+    let score_for_last_bingo = calls_and_scores.iter().max_by_key(|board| board.0).map(|(_, score)| score).unwrap();
+
+    println!("Score for last bingo: {}", score_for_last_bingo);
 }
